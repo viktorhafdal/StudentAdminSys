@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudentAdminSys.Models;
-using System.Diagnostics.Eventing.Reader;
 
 namespace StudentAdminSys.Controllers {
     public class HomeController : Controller {
         public IActionResult Index() {
-            return View();
+            return View(Repository.Students);
         }
 
         public ViewResult CreateStudent() {
@@ -16,7 +15,7 @@ namespace StudentAdminSys.Controllers {
         public ViewResult CreateStudent(Student student) {
             if (ModelState.IsValid) {
                 Repository.AddStudent(student);
-                return View("Congrats", student);
+                return View("StudentCreated", student);
             } else {
                 return View();
             }
@@ -24,6 +23,15 @@ namespace StudentAdminSys.Controllers {
 
         public ViewResult StudentList() {
             return View(Repository.Students);
+        }
+
+        [HttpPost, ActionName("DeleteStudent")]
+        public IActionResult DeleteStudent(Student student) {
+            if (Repository.RemoveStudent(student)) {
+                return View("Index", Repository.Students);
+            } else {
+                return View("Error");
+            }
         }
     }
 }
